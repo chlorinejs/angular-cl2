@@ -18,3 +18,10 @@
                   {:controller anOtherCtrl,
                    :template (hiccup [:div "{{hello}}"])}))
              nil)]))))
+
+(deftest fn-di-macro-test
+  (is (= (macroexpand
+          (fn-di [foo bar] (+ foo bar)))
+         (macroexpand
+          ["foo" "bar"
+           (fn [foo bar] (+ foo bar))]))))
