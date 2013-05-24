@@ -66,3 +66,85 @@
               (filter "anOtherFilter"
                       (fn-di [$http]
                              (fn [y] (+ y 6)))))))))
+
+(deftest ng-test-macro-tests
+  (is (= (macroexpand
+          (ng-test myApp
+            (:controller myCtrl
+              (:tabular
+               (addTwo 1) {:result 3}))
+
+            (:service myService
+              (:tabular
+               (addThree 1) 4))
+
+            (:filter myFilter
+              (:tabular
+               [1] 6))
+
+            (:filter yourFilter
+              (:tabular
+               [2] 8))
+
+            (:directive MyDirective
+              (:tabular
+               [:div {:my-directive "foo"}]
+               {:foo 2}
+               ;; Calling $compile function against provided template and scope
+               ;; returns an element.
+               ;; `(text)` (the same as `text` because they're called by `..` macro)
+               ;; is method call of that element.
+               ;; These methods are provided by Angular's jQuery lite
+               ;; To get full list of them, consult `angular.element` section
+               ;; in AngularJS Global APIs.
+               "6" text
+               "6" (text)))))
+         (macroexpand
+          (do
+            (def injector (.. angular (injector ["ng" "myApp"])))
+            (module "tests"
+                    {:setup
+                     (fn [] (set! (. this -$scope)
+                                  (.. injector (get "$rootScope") $new)))})
+
+            (deftest myCtrl
+              (def $controller (.. injector (get "$controller")))
+              ($controller "myCtrl" {:$scope (. this -$scope)})
+              (equal (.. this -$scope (addTwo 1)) {:result 3}))
+
+            (deftest myService
+              (def myService (.. injector (get "myService")))
+              (equal (.. myService (addThree 1)) 4))
+
+            (deftest myFilter
+              (def $filter (.. injector (get "$filter")))
+              (equal (($filter "myFilter") 1) 6))
+
+            (deftest yourFilter
+              (def $filter (.. injector (get "$filter")))
+              (equal (($filter "yourFilter") 2) 8))
+
+            (deftest MyDirective
+              (def $compile (.. injector (get "$compile")))
+              (do
+                (def element
+                  (($compile
+                    (hiccup [:div {:my-directive "foo"}]))
+                   (. this -$scope)))
+                (do (def!$ :foo 2)
+                    (.. this -$scope $apply)
+                    (equal "6" (.. element text))
+                    (equal "6" (.. element (text)))
+                    (delete (get* (. this -$scope) :foo)))))))))
+
+  ;; Local Variables:
+  ;; mode: clojure
+  ;; eval: (define-clojure-indent
+  ;;         (ng-test (quote defun))
+  ;;         (:controller (quote defun))
+  ;;         (:service (quote defun))
+  ;;         (:filter (quote defun))
+  ;;         (:directive (quote defun))
+  ;;         (:factory (quote defun)))
+  ;; End:
+  )
