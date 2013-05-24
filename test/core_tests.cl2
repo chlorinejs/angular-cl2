@@ -19,7 +19,25 @@
                    :template (hiccup [:div "{{hello}}"])}))
              nil)]))))
 
-(deftest fn-di-macro-test
+(deftest fn-di-&-defn-di-macro-tests
+  (is (= (macroexpand
+          (defn-di foo [] (+ 1 2)))
+         (macroexpand
+          (def foo (fn [] (+ 1 2))))))
+  (is (= (macroexpand
+          (defn-di foo [bar boo] (+ bar boo)))
+         (macroexpand
+          (def foo ["bar" "boo"
+                    (fn [bar boo] (+ bar boo))]))))
+  (is (= (macroexpand
+          (defn-di foo.bar [bar boo] (+ bar boo)))
+         (macroexpand
+          (set! foo.bar ["bar" "boo"
+                    (fn [bar boo] (+ bar boo))]))))
+  (is (= (macroexpand
+          (fn-di [] (+ 1 2)))
+         (macroexpand
+          (fn [] (+ 1 2)))))
   (is (= (macroexpand
           (fn-di [foo bar] (+ foo bar)))
          (macroexpand

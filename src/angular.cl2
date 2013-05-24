@@ -87,11 +87,14 @@
   [di-name & body]
   (let [[docstring v] (if (string? (first body))
                         [(first body) (second body)]
-                        [nil (first body)])]
-    `(def ~di-name
-       (if (= v [])
-         `(fn ~@body)
-         ~(vec (concat (map name v) [`(fn ~@body)]))))))
+                        [nil (first body)])
+        setter (if (contains? (set (seq (name di-name))) \.)
+                 'set!
+                 'def)]
+    `(~setter ~di-name
+       ~(if (= v [])
+          `(fn ~@body)
+          `[~@(map name v) (fn ~@body)]))))
 
 (defmacro ng-test
   [module-name & body]
