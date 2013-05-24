@@ -39,3 +39,30 @@
           (defn$ foo [x] (+ 1 x)))
          (macroexpand
           (set! (. $scope -foo) (fn [x] (+ 1 x)))))))
+
+(deftest defmodule-macro-tests
+  (is (= (macroexpand
+          (defmodule myApp
+            (:route "foo" "bar")
+            (:directive
+             (myDirective
+              []
+              (fn [scope elm attrs])))
+            (:service ;; :controller, :factory -> the same syntax
+             (myService
+              []
+              (defn! addThree [n] (+ n 3))))
+            (:filter (myFilter [] [x] (+ x 5))
+                     (anOtherFilter [$http] [y] (+ y 6)))))
+         (macroexpand-1
+          (.. myApp
+              (config (defroutetable "foo" "bar"))
+              (directive "myDirective"
+                         (fn-di [] (fn [scope elm attrs])))
+              (service "myService"
+                       (fn-di [] (defn! addThree [n] (+ n 3))))
+              (filter "myFilter"
+                      (fn-di [] (fn [x] (+ x 5))))
+              (filter "anOtherFilter"
+                      (fn-di [$http]
+                             (fn [y] (+ y 6)))))))))
