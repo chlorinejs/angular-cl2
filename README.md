@@ -1,22 +1,52 @@
-# ChlorineJs FIXME library
+Angular-cl2
+===========
+Angular macros for [ChlorineJS](https://github.com/chlorinejs/chlorine/wiki).
 
-A ChlorineJs library designed to ... well, that part is up to you.
+[![Build Status](https://travis-ci.org/chlorinejs/angular-cl2.png?branch=master)](https://travis-ci.org/chlorinejs/angular-cl2)
 
-# Usage
-FIXME
+Comsume this package
+--------------------
+You need Java, NodeJS installed.
 
-# Develop
-Ensure you have  installed Java and NPM. Starts watcher by typing:
-```bash
-make watch
+Pull angular-cl2 to your machine:
 ```
-open an other terminal to run the test
+npm install angular-cl2
 ```
-make watch-test
+Now you should have `angular.cl2` somewhere in your `node_modules` directory. Include it as normal:
+```clojure
+(include! "./path/to/angular.cl2")
+;; define your Angular app now
+(defmodule myApp ...)
 ```
 
-# License
+Develope this package
+---------------------
 
-Copyright © 2013 FIXME
+Install dependencies
+--------------------
 
-FIXME library may be used under the terms of either the [GNU Lesser General Public License (LGPL)](http://www.gnu.org/copyleft/lesser.html) or the [Eclipse Public License (EPL)](http://www.eclipse.org/legal/epl-v10.html). As a recipient of FIXME, you may choose which license to receive the code under.
+```
+# install testem to run the tests on the fly
+npm install
+```
+
+Live coding
+-----------
+
+Have your files watched and auto-compiled:
+```
+npm run-script watch
+```
+This will watch for changes and re-compile `*.cl2` files to Javascript.
+
+Now open an other terminal, run testem:
+```
+npm run-script livetest
+```
+
+License
+-------
+
+Copyright © 2013 Hoang Minh Thang
+
+Angular-cl2 library may be used under the terms of either the [GNU Lesser General Public License (LGPL)](http://www.gnu.org/copyleft/lesser.html) or the [Eclipse Public License (EPL)](http://www.eclipse.org/legal/epl-v10.html). As a recipient of angular-cl2, you may choose which license to receive the code under.
