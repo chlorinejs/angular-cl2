@@ -25,3 +25,17 @@
          (macroexpand
           ["foo" "bar"
            (fn [foo bar] (+ foo bar))]))))
+
+(deftest def-something-macro-tests
+  (is (= (macroexpand
+          (def$ foo 1))
+         (macroexpand
+          (set! (. $scope -foo) 1))))
+  (is (= (macroexpand
+          (def!$ foo 1))
+         (macroexpand
+          (set! (.. this -$scope -foo) 1))))
+  (is (= (macroexpand
+          (defn$ foo [x] (+ 1 x)))
+         (macroexpand
+          (set! (. $scope -foo) (fn [x] (+ 1 x)))))))
