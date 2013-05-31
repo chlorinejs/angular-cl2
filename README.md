@@ -14,7 +14,7 @@ npm install angular-cl2
 ```
 Now you should have `angular.cl2` somewhere in your `node_modules` directory. Include it as normal:
 ```clojure
-(include! "./path/to/angular.cl2")
+(load-file "./path/or/url/to/angular.cl2")
 ;; define your Angular app now
 (defmodule myApp ...)
 ```
