@@ -18,7 +18,9 @@ Now you should have `angular.cl2` somewhere in your `node_modules` directory. In
 ;; define your Angular app now
 (defmodule myApp ...)
 ```
-Some examples are also available at https://github.com/chlorinejs-demos/
+A battery-included template is available at https://github.com/chlorinejs/angular-cl2-seed
+
+Some other examples can be found at https://github.com/chlorinejs-demos/
 
 Develope this package
 ---------------------
