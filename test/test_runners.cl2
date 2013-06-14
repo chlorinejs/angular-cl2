@@ -1,2 +1,2 @@
-(include! "../src/angular.cl2")
-(include! "./core_tests.cl2")
+(load-file "../src/angular.cl2")
+(load-file "./core_tests.cl2")

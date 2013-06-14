@@ -19,7 +19,7 @@
     "devDependencies": {
         "testem": ">= 0.2.26",
         "mocha": ">= 1.7.4",
-        "chloric": "0.1.12"
+        "chloric": "0.1.14"
     },
     "license": "EPL, LGPL",
     "scripts": {

@@ -188,17 +188,38 @@
                         (.. injector (get "$rootScope") $new)))})
        ~@final-body)))
 
+(defmacro $-
+  "Shortcut for $scope.{{symbol}}"
+  [sym]
+  (symbol (str "$scope." sym)))
+
+(defmacro this->!
+  "Remembers the current `this` to be used in `def!`, `defn!`, `!-`"
+  []
+  (def ^:dynamic *last-this* (ref 0))
+  (let [sym (gensym "this")]
+    (dosync (ref-set *last-this* sym))
+    `(def ~sym this)))
+
 (defmacro def!
-  "Shortcut for `(set! this.var-name ...)`"
+  "Shortcut for `(set! that.var-name ...)` where `that` is the scope
+  where the last `(this->!)` was called."
   [var-name & [val]]
-  `(set! (. this ~(symbol (str "-" (name var-name))))
+  `(set! ~(symbol (str (name @*last-this*) "." (name var-name)))
          ~val))
 
 (defmacro defn!
-  "Shortcut for `(defn this.fname ...)`"
+  "Shortcut for `(set! that.fname ...)` where `that` is the scope
+  where the last `(this->!)` was called."
   [fname & body]
-  `(set! (. this ~(symbol (str "-" (name fname))))
+  `(set! ~(symbol (str (name @*last-this*) "." (name fname)))
          (fn ~@body)))
+
+(defmacro !-
+  "Shortcut for `that.var-name` where `that` is the scope
+  where the last `(this->!)` was called."
+  [sym]
+  (symbol (str @*last-this* "." sym)))
 
 (defmacro def$
   "Shortcut for `(set! $scope.var-name ...)`"

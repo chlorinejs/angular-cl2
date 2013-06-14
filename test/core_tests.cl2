@@ -44,7 +44,10 @@
           ["foo" "bar"
            (fn [foo bar] (+ foo bar))]))))
 
-(deftest def-something-macro-tests
+(deftest $-def$-defn$-macro-tests
+  (is (= (macroexpand
+          ($- foo.bar))
+         "$scope.foo.bar"))
   (is (= (macroexpand
           (def$ foo 1))
          (macroexpand
@@ -57,6 +60,20 @@
           (defn$ foo [x] (+ 1 x)))
          (macroexpand
           (set! (. $scope -foo) (fn [x] (+ 1 x)))))))
+
+(deftest !-_tests
+  (def that this)
+  (this->!)
+  (set! this.foo 3)
+  ;; wraps in a function to change `this`
+  (def! bar 5)
+  (#(def! bazz 7))
+  (is (= 3 that.foo))
+  (is (= 5 that.bar))
+  (is (= 7 that.bazz))
+  (is (= 3 (!- foo)))
+  (is (= 5 (!- bar)))
+  (is (= 7 (!- bazz))))
 
 (deftest defmodule-macro-tests
   (is (= (macroexpand
@@ -72,7 +89,7 @@
               (defn! addThree [n] (+ n 3))))
             (:filter (myFilter [] [x] (+ x 5))
                      (anOtherFilter [$http] [y] (+ y 6)))))
-         (macroexpand-1
+         (macroexpand
           (.. myApp
               (config (defroutetable "foo" "bar"))
               (directive "myDirective"
