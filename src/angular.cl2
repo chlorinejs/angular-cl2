@@ -313,3 +313,12 @@ with the same name to it."
   "Defines a filter for an app."
   [& body]
   `(defsinglemodule :route ~body))
+
+(defmacro safe-apply
+  "Executes a code block that may make changes to scope and call
+  $digest (via $apply) when needed."
+  [scope & body]
+  `(let [func# (fn [] ~@body)]
+     (if (or (. ~scope -$$phase) (. ~scope -$root.$$phase))
+       (func#)
+       (. ~scope ($apply func#)))))
