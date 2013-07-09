@@ -1,6 +1,6 @@
 {
     "name": "angular-cl2",
-    "version": "0.3.1",
+    "version": "0.3.2",
     "description": "Angular macros for ChlorineJS (a subset of Clojure)",
     "repository": {
         "type": "git",
@@ -12,6 +12,8 @@
         "chlorinejs",
         "clojure",
         "atom",
+        "watch",
+        "test",
         "macro"
     ],
     "directories": {
