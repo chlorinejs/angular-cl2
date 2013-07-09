@@ -326,11 +326,22 @@ with the same name to it."
 (defmacro $->atom
   "Links a scope attribute to an atom so that everytime the atom
   is changed, the linked scope attribute will get updated to its
-  new value (thank to atom's watchers)."
-  [k an-atom]
-  `(do (def$ ~k (deref ~an-atom))
+  new value (thank to atom's watchers).
+  If an updater-fn is specified, the scope attribute will not be updated
+  to the atom's value but the value returned by apply updater-fn to
+  the atom's new value instead."
+  [k an-atom & [updater-fn]]
+  (if updater-fn
+    `(let [updater-fn ~updater-fn]
+       (def$ ~k (updater-fn (deref ~an-atom)))
        (add-watch ~an-atom
-                  ~(keyword (gensym "link-atom"))
+                  ~(keyword (gensym (str "$-" k "-")))
                   (fn [_ _ _ new-val]
                     (safe-apply $scope
-                       (def$ ~k new-val))))))
+                                (def$ ~k (updater-fn new-val))))))
+    `(do (def$ ~k (deref ~an-atom))
+         (add-watch ~an-atom
+                    ~(keyword (gensym (str "$-" k "-")))
+                    (fn [_ _ _ new-val]
+                      (safe-apply $scope
+                                  (def$ ~k new-val)))))))
