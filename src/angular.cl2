@@ -3,8 +3,8 @@
   (let [final-module (if (symbol? module-dclrs)
                        module-dclrs
                        (let [[module-name module-deps] module-dclrs]
-                         `(.. angular (module ~(name module-name)
-                                              ~(mapv name module-deps)))))
+                         `(.. angular (module ~(keyword module-name)
+                                              ~(mapv keyword module-deps)))))
         final-body
         (apply
          concat
@@ -18,7 +18,7 @@
                     (= :filter section-type)
                     (let [[filter-name filter-deps & filter-body]
                           section-expr]
-                      `(filter ~(name filter-name)
+                      `(filter ~(keyword filter-name)
                                (fn-di ~filter-deps
                                       (fn ~@filter-body))))
 
@@ -26,14 +26,14 @@
                     (let [[d-name d-deps directive-def]
                           section-expr]
                       `(directive
-                        ~(name d-name)
+                        ~(keyword d-name)
                         (fn-di ~d-deps ~directive-def)))
 
                     (contains? #{:controller :factory :service}
                                section-type)
                     (let [[di-name & body]
                           section-expr]
-                      `(~(symbol (name section-type)) ~(name di-name)
+                      `(~(symbol (name section-type)) ~(keyword di-name)
                         (fn-di ~@body)))
                     :default
                     (throw (Exception. "Unsupported syntax"))))))
@@ -51,8 +51,8 @@
     \"/alias\"  \"/stuff\"
    :default {:some :config :map ...})"
   [& routes]
-  `(fn-di [$routeProvider]
-          (.. $routeProvider
+  `(fn-di [$route-provider]
+          (.. $route-provider
               ~@(for [[route route-config] (partition 2 routes)]
                   (let [head (if (keyword? route)
                                ['otherwise]
@@ -79,7 +79,7 @@
                         [nil (first body)])]
     (if (= v [])
       `(fn ~@body)
-      (vec (concat (map name v) [`(fn ~@body)])))))
+      (vec (concat (map #(keyword (name %)) v) [`(fn ~@body)])))))
 
 (defmacro defn-di
   "Like `defn` but will automatically generate dependency injection vectors.
@@ -94,7 +94,7 @@
     `(~setter ~di-name
        ~(if (= v [])
           `(fn ~@body)
-          `[~@(map name v) (fn ~@body)]))))
+          `[~@(map #(keyword (name %)) v) (fn ~@body)]))))
 
 (defmacro ng-test
   [module-name & body]
@@ -107,21 +107,21 @@
                    (= :controller test-type)
                    (list
                     `(def $controller
-                       (.. injector (get "$controller")))
-                    `($controller ~(name test-name)
+                       (.. injector (get :$controller)))
+                    `($controller ~(keyword test-name)
                                   {:$scope (. this -$scope)}))
 
                    (= :service test-type)
                    (list
-                    `(def ~test-name (.. injector (get ~(name test-name)))))
+                    `(def ~test-name (.. injector (get ~(keyword test-name)))))
 
                    (= :filter test-type)
                    (list
-                    `(def $filter (.. injector (get "$filter"))))
+                    `(def $filter (.. injector (get :$filter))))
 
                    (= :directive test-type)
                    (list
-                    `(def $compile (.. injector (get "$compile"))))
+                    `(def $compile (.. injector (get :$compile))))
 
                    :default
                    nil))
@@ -161,7 +161,7 @@
                        `(equal (.. ~test-name ~test-case)
                                ~expect-val)
                        (= :filter test-type)
-                       `(equal (($filter ~(name test-name))
+                       `(equal (($filter ~(keyword test-name))
                                 ~@test-case)
                                ~expect-val)
 
@@ -180,12 +180,12 @@
                ~@(test-tabular test-type test-name test-body))
             ))]
     `(do
-       (def injector (.. angular (injector ["ng" ~(name module-name)])))
+       (def injector (.. angular (injector [:ng ~(keyword module-name)])))
        (module "tests"
                {:setup
                 (fn []
                   (set! (. this -$scope)
-                        (.. injector (get "$rootScope") $new)))})
+                        (.. injector (get :$rootScope) $new)))})
        ~@final-body)))
 
 (defmacro $-

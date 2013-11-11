@@ -1,39 +1,44 @@
 (deftest defroutetable-macro-tests
   (is (= (macroexpand
           (defroutetable
-            "/an-url" [aCtrl "a-template-url.html"]
+            "/an-url" [a-ctrl "a-template-url.html"]
             "/alias" "/stuff"
-            :default {:controller anOtherCtrl
+            :default {:controller an-other-ctrl
                       :template (hiccup [:div "{{hello}}"])}))
          (macroexpand
-          ["$routeProvider"
-           (fn [$routeProvider]
-             (.. $routeProvider
+          [:$route-provider
+           (fn [$route-provider]
+             (.. $route-provider
                  (when "/an-url"
-                   {:controller aCtrl,
+                   {:controller a-ctrl,
                     :templateUrl "a-template-url.html"})
                  (when "/alias"
                    {:redirectTo "/stuff"})
                  (otherwise
-                  {:controller anOtherCtrl,
+                  {:controller an-other-ctrl
                    :template (hiccup [:div "{{hello}}"])}))
              nil)]))))
 
 (deftest fn-di-&-defn-di-macro-tests
   (is (= (macroexpand
-          (defn-di foo [] (+ 1 2)))
+          (defn-di foo
+            [] (+ 1 2)))
          (macroexpand
           (def foo (fn [] (+ 1 2))))))
   (is (= (macroexpand
-          (defn-di foo [bar boo] (+ bar boo)))
+          (defn-di foo
+            [bar boo] (+ bar boo)))
          (macroexpand
-          (def foo ["bar" "boo"
-                    (fn [bar boo] (+ bar boo))]))))
+          (def foo
+            [:bar :boo
+             (fn [bar boo] (+ bar boo))]))))
   (is (= (macroexpand
-          (defn-di foo.bar [bar boo] (+ bar boo)))
+          (defn-di foo.bar
+            [bar boo] (+ bar boo)))
          (macroexpand
-          (set! foo.bar ["bar" "boo"
-                    (fn [bar boo] (+ bar boo))]))))
+          (set! foo.bar
+                [:bar :boo
+                 (fn [bar boo] (+ bar boo))]))))
   (is (= (macroexpand
           (fn-di [] (+ 1 2)))
          (macroexpand
@@ -41,13 +46,13 @@
   (is (= (macroexpand
           (fn-di [foo bar] (+ foo bar)))
          (macroexpand
-          ["foo" "bar"
+          [:foo :bar
            (fn [foo bar] (+ foo bar))]))))
 
 (deftest $-def$-defn$-macro-tests
   (is (= (macroexpand
           ($- foo.bar))
-         "$scope.foo.bar"))
+         :$scope.foo.bar))
   (is (= (macroexpand
           (def$ foo 1))
          (macroexpand
@@ -77,51 +82,51 @@
 
 (deftest defmodule-macro-tests
   (is (= (macroexpand
-          (defmodule myApp
+          (defmodule my-app
             (:route "foo" "bar")
             (:directive
-             (myDirective
-              []
-              (fn [scope elm attrs])))
+              (my-directive
+               []
+               (fn [scope elm attrs])))
             (:service ;; :controller, :factory -> the same syntax
-             (myService
-              []
-              (defn! addThree [n] (+ n 3))))
-            (:filter (myFilter [] [x] (+ x 5))
-                     (anOtherFilter [$http] [y] (+ y 6)))))
+              (my-service
+               []
+               (defn! add-three [n] (+ n 3))))
+            (:filter (my-filter [] [x] (+ x 5))
+              (an-other-filter [$http] [y] (+ y 6)))))
          (macroexpand
-          (.. myApp
+          (.. my-app
               (config (defroutetable "foo" "bar"))
-              (directive "myDirective"
+              (directive :my-directive
                          (fn-di [] (fn [scope elm attrs])))
-              (service "myService"
-                       (fn-di [] (defn! addThree [n] (+ n 3))))
-              (filter "myFilter"
+              (service :my-service
+                       (fn-di [] (defn! add-three [n] (+ n 3))))
+              (filter :my-filter
                       (fn-di [] (fn [x] (+ x 5))))
-              (filter "anOtherFilter"
+              (filter :an-other-filter
                       (fn-di [$http]
                              (fn [y] (+ y 6)))))))))
 
 (deftest ng-test-macro-tests
   (is (= (macroexpand
-          (ng-test myApp
-            (:controller myCtrl
+          (ng-test my-app
+            (:controller my-ctrl
               (:tabular
-               (addTwo 1) {:result 3}))
+               (add-two 1) {:result 3}))
 
-            (:service myService
+            (:service my-service
               (:tabular
-               (addThree 1) 4))
+               (add-three 1) 4))
 
-            (:filter myFilter
+            (:filter my-filter
               (:tabular
                [1] 6))
 
-            (:filter yourFilter
+            (:filter your-filter
               (:tabular
                [2] 8))
 
-            (:directive MyDirective
+            (:directive my-directive
               (:tabular
                [:div {:my-directive "foo"}]
                {:foo 2}
@@ -136,31 +141,31 @@
                "6" (text)))))
          (macroexpand
           (do
-            (def injector (.. angular (injector ["ng" "myApp"])))
+            (def injector (.. angular (injector [:ng :my-app])))
             (module "tests"
                     {:setup
                      (fn [] (set! (. this -$scope)
-                                  (.. injector (get "$rootScope") $new)))})
+                                  (.. injector (get :$rootScope) $new)))})
 
-            (deftest myCtrl
-              (def $controller (.. injector (get "$controller")))
-              ($controller "myCtrl" {:$scope (. this -$scope)})
-              (equal (.. this -$scope (addTwo 1)) {:result 3}))
+            (deftest my-ctrl
+              (def $controller (.. injector (get :$controller)))
+              ($controller :my-ctrl {:$scope (. this -$scope)})
+              (equal (.. this -$scope (add-two 1)) {:result 3}))
 
-            (deftest myService
-              (def myService (.. injector (get "myService")))
-              (equal (.. myService (addThree 1)) 4))
+            (deftest my-service
+              (def my-service (.. injector (get :my-service)))
+              (equal (.. my-service (add-three 1)) 4))
 
-            (deftest myFilter
-              (def $filter (.. injector (get "$filter")))
-              (equal (($filter "myFilter") 1) 6))
+            (deftest my-filter
+              (def $filter (.. injector (get :$filter)))
+              (equal (($filter :my-filter) 1) 6))
 
-            (deftest yourFilter
-              (def $filter (.. injector (get "$filter")))
-              (equal (($filter "yourFilter") 2) 8))
+            (deftest your-filter
+              (def $filter (.. injector (get :$filter)))
+              (equal (($filter :your-filter) 2) 8))
 
-            (deftest MyDirective
-              (def $compile (.. injector (get "$compile")))
+            (deftest my-directive
+              (def $compile (.. injector (get :$compile)))
               (do
                 (def element
                   (($compile
