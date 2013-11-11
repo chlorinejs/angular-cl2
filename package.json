@@ -22,12 +22,12 @@
     "devDependencies": {
         "testem": ">= 0.2.26",
         "mocha": ">= 1.7.4",
-        "chloric": "0.1.14"
+        "chloric": "0.1.16-SNAPSHOT"
     },
     "license": "EPL, LGPL",
     "scripts": {
-        "watch": "cl2c -d -u profile.cl2 -t 10000 -v -w './src/,./test/' ./test/test_runners.cl2",
-        "compile-test": "cl2c -d -1 -u profile.cl2 -t 10000 -v ./test/test_runners.cl2",
+        "watch": "cl2c -D -u profile.cl2 -t 10000 -v -w './src/,./test/' ./test/test_runners.cl2",
+        "compile-test": "cl2c -D -1 -u profile.cl2 -t 10000 -v ./test/test_runners.cl2",
         "test": "testem -l Firefox ci",
         "mocha": "testem -l Mocha test_runners.js",
         "phantomjs": "testem -l phantomjs ci",
