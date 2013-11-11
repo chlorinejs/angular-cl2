@@ -158,10 +158,14 @@
                           (partition 2 (rest expr))]
                       (cond
                        (= :controller test-type)
-                       `(equal (.. this -$scope ~test-case)
+                       `(equal ((~(keyword (first test-case))
+                                 this.$scope)
+                                ~@(rest test-case))
                                ~expect-val)
                        (= :service test-type)
-                       `(equal (.. ~test-name ~test-case)
+                       `(equal ((~(keyword (first test-case))
+                                 ~test-name)
+                                ~@(rest test-case))
                                ~expect-val)
                        (= :filter test-type)
                        `(equal (($filter ~(keyword test-name))
