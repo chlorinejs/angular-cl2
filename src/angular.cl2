@@ -140,7 +140,10 @@
                           ~(apply
                             concat
                             (for [[scope-var scope-val] scope-map]
-                              `(do (def!$ ~scope-var ~scope-val)
+                              `(do (set!
+                                    ~(symbol (str "this.$scope."
+                                                  (name scope-var)))
+                                         ~scope-val)
                                    (.. this -$scope $apply)
                                    ~@(for [[expect-val test-method]
                                            (partition 2 test-table)]
@@ -224,19 +227,20 @@
 (defmacro def$
   "Shortcut for `(set! $scope.var-name ...)`"
   [var-name & [val]]
-  `(set! (. $scope ~(symbol (str "-" (name var-name))))
+  `(set! ~(symbol (str "$scope." (name var-name)))
          ~val))
 
 (defmacro def!$
-  "Shortcut for `(set! this.$scope.var-name ...)`"
+  "Shortcut for `(set! that.$scope.var-name ...)` where `that` is
+  the scope where the last `(this->!)` was called."
   [var-name & [val]]
-  `(set! (.. this -$scope ~(symbol (str "-" (name var-name))))
+  `(set! ~(symbol (str (name @*last-this*) ".$scope." (name var-name)))
          ~val))
 
 (defmacro defn$
   "Shortcut for `(defn $scope.fname ...)`"
   [fname & body]
-  `(set! (. $scope ~(symbol (str "-" (name fname))))
+  `(set! ~(symbol (str "$scope." (name fname)))
          (fn ~@body)))
 
 (defmacro set-last-app

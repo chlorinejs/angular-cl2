@@ -52,19 +52,16 @@
 (deftest $-def$-defn$-macro-tests
   (is (= (macroexpand
           ($- foo.bar))
-         :$scope.foo.bar))
-  (is (= (macroexpand
-          (def$ foo 1))
          (macroexpand
-          (set! (. $scope -foo) 1))))
+          $scope.foo.bar)))
   (is (= (macroexpand
-          (def!$ foo 1))
+          (def$ foo-bar 1))
          (macroexpand
-          (set! (.. this -$scope -foo) 1))))
+          (set! $scope.foo-bar 1))))
   (is (= (macroexpand
-          (defn$ foo [x] (+ 1 x)))
+          (defn$ foo-fun [x] (+ 1 x)))
          (macroexpand
-          (set! (. $scope -foo) (fn [x] (+ 1 x)))))))
+          (set! $scope.foo-fun (fn [x] (+ 1 x)))))))
 
 (deftest !-_tests
   (def that this)
