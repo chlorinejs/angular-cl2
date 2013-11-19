@@ -147,11 +147,13 @@
             (deftest my-ctrl
               (def $controller (.. injector (get :$controller)))
               ($controller :my-ctrl {:$scope (. this -$scope)})
-              (equal (.. this -$scope (add-two 1)) {:result 3}))
+              (equal ((:add-two this.$scope) 1)
+                     {:result 3}))
 
             (deftest my-service
               (def my-service (.. injector (get :my-service)))
-              (equal (.. my-service (add-three 1)) 4))
+              (equal ((:add-three my-service) 1)
+                     4))
 
             (deftest my-filter
               (def $filter (.. injector (get :$filter)))
@@ -168,7 +170,7 @@
                   (($compile
                     (hiccup [:div {:my-directive "foo"}]))
                    (. this -$scope)))
-                (do (def!$ :foo 2)
+                (do (set! this.$scope.foo 2)
                     (.. this -$scope $apply)
                     (equal "6" (.. element text))
                     (equal "6" (.. element (text)))
