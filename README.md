@@ -1,55 +1,61 @@
-Angular-cl2
-===========
+# Angular-cl2
+
 Angular macros for [ChlorineJS](https://github.com/chlorinejs/chlorine/wiki).
 
 [![Build Status](https://travis-ci.org/chlorinejs/angular-cl2.png?branch=master)](https://travis-ci.org/chlorinejs/angular-cl2)
 
-Comsume this package
---------------------
-You need Java, NodeJS installed.
+## Prerequisites
 
+You will need [nodejs][1] and [Leiningen][2] 2.0 or above installed.
+
+[1]: http://nodejs.org
+[2]: http://leiningen.org
+
+## Installation
+
+Add angular-cl2 to your [lein-npm][3]-powered project:
+
+[3]: https://github.com/bodil/lein-npm
+
+```clojure
+;; project.clj
+:node-dependencies [angular-cl2 "0.3.0-SNAPSHOT"]
+```
 Pull angular-cl2 to your machine:
 ```
-npm install angular-cl2
+lein npm install
 ```
-Now you should have `angular.cl2` somewhere in your `node_modules` directory. Include it as normal:
+Now you should have `angular_cl2/src/core.cl2` in your `node_modules` directory.
+Include it in your ChlorineJs source file(s):
+
 ```clojure
-(load-file "./path/or/url/to/angular.cl2")
-;; define your Angular app now
-(defmodule myApp ...)
-```
-A battery-included template is available at https://github.com/chlorinejs/angular-cl2-seed
-
-Some other examples can be found at https://github.com/chlorinejs-demos/
-
-Develope this package
----------------------
-
-Install dependencies
---------------------
-
-```
-# install testem to run the tests on the fly
-npm install
+;; some-file.cl2
+(load-file "angular_cl2/src/core.cl2")
 ```
 
-Live coding
------------
+## Develope angular-cl2
+
+### Live coding
 
 Have your files watched and auto-compiled:
 ```
-npm run-script watch
+lein cl2c auto dev
 ```
 This will watch for changes and re-compile `*.cl2` files to Javascript.
 
-Now open an other terminal, run testem:
+Now open an other terminal, have mocha run the tests:
 ```
-npm run-script livetest
+lein npm run-script mocha-auto
 ```
 
-License
--------
+## Usage
+
+FIXME
+
+## License
 
 Copyright © 2013 Hoang Minh Thang
+Copyright © 2014 Hoang Minh Thang
 
-Angular-cl2 library may be used under the terms of either the [GNU Lesser General Public License (LGPL)](http://www.gnu.org/copyleft/lesser.html) or the [Eclipse Public License (EPL)](http://www.eclipse.org/legal/epl-v10.html). As a recipient of angular-cl2, you may choose which license to receive the code under.
+Distributed under the Eclipse Public License either version 1.0 or (at
+your option) any later version.
