@@ -1,8 +1,0 @@
-{
-"framework": "qunit",
-"launchers": {
-  "Mocha": {
-    "command": "mocha -u qunit test_runners.js"
-    }
-  }
-}
