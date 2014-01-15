@@ -1,4 +1,4 @@
-(defproject angular-cl2 "0.3.0-SNAPSHOT"
+(defproject angular-cl2 "0.3.3-SNAPSHOT"
   :description "Angular macros for ChlorineJS (a subset of Clojure)"
   :url "http://github.com/chlorinejs/angular-cl2.git"
   :license {:name "Eclipse Public License"
