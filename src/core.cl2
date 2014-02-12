@@ -3,8 +3,12 @@
   (let [final-module (if (symbol? module-dclrs)
                        module-dclrs
                        (let [[module-name module-deps] module-dclrs]
-                         `(.. angular (module ~(keyword module-name)
-                                              ~(mapv keyword module-deps)))))
+                         `(. angular
+                             (module ~(keyword module-name)
+                                     ~(mapv #(if (string? %)
+                                               %
+                                               (keyword %))
+                                            module-deps)))))
         final-body
         (apply
          concat
