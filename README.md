@@ -19,7 +19,7 @@ Add angular-cl2 to your [lein-npm][3]-powered project:
 
 ```clojure
 ;; project.clj
-:node-dependencies [angular-cl2 "0.3.0-SNAPSHOT"]
+:node-dependencies [angular-cl2 "0.3.4-SNAPSHOT"]
 ```
 Pull angular-cl2 to your machine:
 ```
@@ -50,7 +50,7 @@ lein npm run-script mocha-auto
 
 ## Usage
 
-FIXME
+See documents and example code at [Angular-cl2's wiki](https://github.com/chlorinejs/angular-cl2/wiki)
 
 ## License
 
