@@ -103,3 +103,21 @@
               (filter :an-other-filter
                       (fn-di [$http]
                              (fn [y] (+ y 6)))))))))
+
+(defmacro some-name-plus-one []
+  `(+ 1 (!- some-name)))
+
+(defmacro an-other-name-plus-two []
+  `(+ 1 ($- an-other-name)))
+
+(this->!)
+(def! some-name 3)
+
+(def $scope {})
+(def$ an-other-name 2)
+
+(deftest defmacro-with-macros-inside-test
+  (is (= (some-name-plus-one)
+         4))
+  (is (= (an-other-name-plus-two)
+         3)))
