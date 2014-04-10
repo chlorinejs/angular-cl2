@@ -237,7 +237,7 @@ with the same name to it."
        (func#)
        (. ~scope ($apply func#)))))
 
-(defmacro $->atom
+(defmacro $<-atom
   "Links a scope attribute to an atom so that everytime the atom
   is changed, the linked scope attribute will get updated to its
   new value (thank to atom's watchers).
