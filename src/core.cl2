@@ -103,7 +103,8 @@
 (defmacro $-
   "Shortcut for $scope.{{symbol}}"
   [sym]
-  (symbol (str "$scope." sym)))
+  `(~(keyword sym) $scope)
+  )
 
 (defmacro this->!
   "Remembers the current `this` to be used in `def!`, `defn!`, `!-`"
@@ -131,7 +132,7 @@
   "Shortcut for `that.var-name` where `that` is the scope
   where the last `(this->!)` was called."
   [sym]
-  (symbol (str @*last-this* "." sym)))
+  `(~(keyword sym) ~(deref *last-this*)))
 
 (defmacro def$
   "Shortcut for `(set! $scope.var-name ...)`"
