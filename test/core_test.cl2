@@ -53,7 +53,7 @@
   (is (= (macroexpand
           ($- foo.bar))
          (macroexpand
-          $scope.foo.bar)))
+          (:foo.bar $scope))))
   (is (= (macroexpand
           (def$ foo-bar 1))
          (macroexpand
