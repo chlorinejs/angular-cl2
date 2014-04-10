@@ -3,4 +3,4 @@ lein: lein2
 before_install:
   - lein2 deps
   - lein2 cl2c once dev
-script: node_modules/mocha/bin/mocha -u qunit test/test_runner.js
+script: cd test && ../node_modules/mocha/bin/mocha -u qunit test_runner.js
